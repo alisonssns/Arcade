@@ -1,0 +1,130 @@
+html,
+body {
+    position: absolute;
+    inset: 0;
+    margin: 20px 10px 10px 10px;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: white;
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #0d1720;
+}
+
+.left_side {
+    background-color: #16202c;
+    width: 300px;
+    height: 100%;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.left_side {
+    h1,
+    h2 {
+        margin: 0;
+    }
+}
+
+.title {
+
+    h1,
+    h2 {
+        line-height: 16px;
+    }
+}
+
+.container {
+    width: 90%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.column {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.option {
+    padding: 15px 0;
+    border-radius: 10px;
+}
+
+.selected {
+    background-color: #1b2c3a;
+}
+
+.left_side i {
+    display: flex;
+    align-items: center;
+}
+
+.game_image {
+    width: 45px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.right_side{
+    width: calc(100% - 340px);
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.slider{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    height: 500px;
+    width: 100%;
+}
+
+.slider_holder{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    height: 100%;
+    transition: 0.5s ease;
+}
+
+.slide{
+    position: relative;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.54);
+    height: 500px;
+    width: 800px;
+    overflow: hidden;
+    transition: 0.5s ease;
+}
+
+.background{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    object-fit: cover;
+}
