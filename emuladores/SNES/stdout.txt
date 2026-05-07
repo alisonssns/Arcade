@@ -1,0 +1,6 @@
+Reading config file \\wsl.localhost\Ubuntu\home\aliso\arcade\emuladores\SNES\snes9x.conf.
+Saving	config file	\\wsl.localhost\Ubuntu\home\aliso\arcade\emuladores\SNES\snes9x.conf
+No ROM file header found.
+Map_SDD1LoROMMap
+"STREET FIGHTER ALPHA22" [checksum ok] LoROM, 32Mbits, ROM+S-DD1, NTSC, SRAM:0Kbits, ID:AUZE, CRC32:9C59DDFF
+Saving	config file	\\wsl.localhost\Ubuntu\home\aliso\arcade\emuladores\SNES\snes9x.conf
