@@ -1,7 +1,9 @@
 #include "config.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <vector>
 #include <string>
+#include <iostream>
 
 void inicializarJogo(Jogo jogo)
 {
@@ -19,32 +21,50 @@ void inicializarJogo(Jogo jogo)
 int main()
 {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-    sf::RenderWindow window(desktop, "Projeto Arcade", sf::Style::None);
+    // Na SFML 3, o Style::None mudou ligeiramente de escopo (opcional, mas recomendado passar como State)
+    sf::RenderWindow window(desktop, "Projeto Arcade", sf::State::Windowed);
     sf::Font fonte;
 
     std::vector<Jogo> listaJogos = carregarConfiguracoes();
-    fonte.loadFromFile("./fontes/arial.ttf");
+
+    for (int i = 0; i < listaJogos.size(); i++)
+    {
+        // Se a textura tem tamanho, significa que o loadFromFile deu certo
+        if (listaJogos[i].textura.getSize().x > 0)
+        {
+            listaJogos[i].sprite->setTexture(listaJogos[i].textura);
+        }
+    }
+
+    // SFML 3: loadFromFile mudou para openFromFile
+    if (!fonte.openFromFile("./fontes/arial.ttf"))
+    {
+        std::cerr << "Erro ao carregar a fonte!" << std::endl;
+    }
+
     window.setFramerateLimit(60);
 
     int selecionado = 0;
 
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
+        // SFML 3: O novo sistema de eventos com std::optional
+        while (const std::optional<sf::Event> event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            // Verifica se a janela foi fechada
+            if (event->is<sf::Event::Closed>())
                 window.close();
 
-            if (event.type == sf::Event::KeyPressed)
+            // Verifica se uma tecla foi pressionada
+            if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
-                if (event.key.code == sf::Keyboard::Escape)
+                if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
-                if (event.key.code == sf::Keyboard::Right && selecionado < listaJogos.size() - 1)
+                if (keyPressed->scancode == sf::Keyboard::Scan::Right && selecionado < listaJogos.size() - 1)
                     selecionado++;
-                if (event.key.code == sf::Keyboard::Left && selecionado > 0)
+                if (keyPressed->scancode == sf::Keyboard::Scan::Left && selecionado > 0)
                     selecionado--;
-                if (event.key.code == sf::Keyboard::Enter)
+                if (keyPressed->scancode == sf::Keyboard::Scan::Enter)
                     inicializarJogo(listaJogos[selecionado]);
             }
         }
@@ -61,45 +81,51 @@ int main()
             float dist = i - selecionado;
             float offset = dist * 600.f;
 
-            listaJogos[i].sprite.setPosition(centroX + offset, sliderY - 50.f);
+            // SFML 3: Exige vetor {x, y} em vez de floats separados
+            listaJogos[i].sprite->setPosition({centroX + offset, sliderY - 50.f});
 
             if (i == selecionado)
             {
-                listaJogos[i].sprite.setScale(listaJogos[i].escalaBaseX * 1.2f, listaJogos[i].escalaBaseY * 1.2f);
-                listaJogos[i].sprite.setColor(sf::Color::White);
+                listaJogos[i].sprite->setScale({listaJogos[i].escalaBaseX * 1.2f, listaJogos[i].escalaBaseY * 1.2f});
+                listaJogos[i].sprite->setColor(sf::Color::White);
             }
             else
             {
-                listaJogos[i].sprite.setScale(listaJogos[i].escalaBaseX * 0.8f, listaJogos[i].escalaBaseY * 0.8f);
-                listaJogos[i].sprite.setColor(sf::Color(100, 100, 100, 150));
-                window.draw(listaJogos[i].sprite);
+                listaJogos[i].sprite->setScale({listaJogos[i].escalaBaseX * 0.8f, listaJogos[i].escalaBaseY * 0.8f});
+                // SFML 3: Cores não usam mais construtor com 4 inteiros no formato antigo, usar rgba
+                listaJogos[i].sprite->setColor(sf::Color(100, 100, 100, 150));
+                window.draw(*listaJogos[i].sprite);
             }
         }
 
-        window.draw(listaJogos[selecionado].sprite);
+        window.draw(*listaJogos[selecionado].sprite);
 
-        sf::RectangleShape sidebar(sf::Vector2f(larguraSidebar, window.getSize().y));
+        // SFML 3: Construtor do RectangleShape exige vetor com chaves {}
+        sf::RectangleShape sidebar({larguraSidebar, static_cast<float>(window.getSize().y)});
         sidebar.setFillColor(COR_SIDEBAR);
         window.draw(sidebar);
 
-        sf::Text logo("Projeto Arcade", fonte, 24);
-        logo.setPosition(40.f, 50.f);
+        // SFML 3: A fonte vem primeiro, depois a string!
+        sf::Text logo(fonte, "Projeto Arcade", 24);
+        logo.setPosition({40.f, 50.f});
+        // SFML 3: SetStyle também teve o enum alterado para Bold
         logo.setStyle(sf::Text::Bold);
         window.draw(logo);
 
-        sf::Text txtTitulo(listaJogos[selecionado].titulo, fonte, 28);
-        txtTitulo.setOrigin(txtTitulo.getGlobalBounds().width / 2, 0);
-        txtTitulo.setPosition(centroX, centroY + 180.f);
+        sf::Text txtTitulo(fonte, listaJogos[selecionado].titulo, 28);
+        // SFML 3: width virou size.x
+        txtTitulo.setOrigin({txtTitulo.getGlobalBounds().size.x / 2.f, 0.f});
+        txtTitulo.setPosition({centroX, centroY + 180.f});
         window.draw(txtTitulo);
 
-        sf::Text txtInfo(std::to_string(selecionado + 1) + "/" + std::to_string(listaJogos.size()), fonte, 18);
-        txtInfo.setOrigin(txtInfo.getGlobalBounds().width / 2, 0);
-        txtInfo.setPosition(centroX, centroY + 230.f);
+        sf::Text txtInfo(fonte, std::to_string(selecionado + 1) + "/" + std::to_string(listaJogos.size()), 18);
+        txtInfo.setOrigin({txtInfo.getGlobalBounds().size.x / 2.f, 0.f});
+        txtInfo.setPosition({centroX, centroY + 230.f});
         window.draw(txtInfo);
 
-        sf::Text txtAcao("Pressione (A) para iniciar o jogo", fonte, 18);
-        txtAcao.setOrigin(txtAcao.getGlobalBounds().width / 2, 0);
-        txtAcao.setPosition(centroX, window.getSize().y - 80.f);
+        sf::Text txtAcao(fonte, "Pressione (A) para iniciar o jogo", 18);
+        txtAcao.setOrigin({txtAcao.getGlobalBounds().size.x / 2.f, 0.f});
+        txtAcao.setPosition({centroX, window.getSize().y - 80.f});
         window.draw(txtAcao);
 
         window.display();

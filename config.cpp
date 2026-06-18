@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <cctype>
 
-const std::string SNES = "emuladores/SNES/snes9x-x64.exe";
-const std::string GBA = "emuladores/GBA/mGBA.exe";
-const std::string NEO = "emuladores/fbneo/fbneo.exe";
-const std::string PSCX = "emuladores/PCSX/pcsx2-qt.exe";
+const std::string SNES = "retroarch -L /home/alissonl/.config/retroarch/cores/snes9x_libretro.so";
+const std::string GBA = "retroarch -L /home/alissonl/.config/retroarch/cores/mgba_libretro.so";
+const std::string NEO = "retroarch -L /home/alissonl/.config/retroarch/cores/fbneo_libretro.so";
+const std::string PSCX = "retroarch -L /home/alissonl/.config/retroarch/cores/snes9x_libretro.so";
 
 std::string lower(std::string data)
 {
@@ -22,43 +22,49 @@ std::string lower(std::string data)
 std::vector<Jogo> carregarConfiguracoes()
 {
     std::vector<Jogo> lista = {
-        {.titulo = "Street Fighter 2", .emulador = SNES, .rota = "./emuladores/SNES/", .rom = "sta2.sfc"},
-        {.titulo = "Metal Slug 3", .emulador = NEO, .rota = "emuladores/fbneo/fbneo.exe", .rom = "mslug3"},
-        {.titulo = "Tekken 3", .emulador = PSCX, .rota = "emuladores/SNES/", .rom = "tekken3"},
-        {.titulo = "Sonic 3", .emulador = GBA, .rota = "emuladores/GBA/", .rom = "sonic.gba"},
-        {.titulo = "Zelda", .emulador = GBA, .rota = "emuladores/GBA/", .rom = "zelda.gba"}};
+        {.titulo = "Street Fighter 2", .emulador = SNES, .imagem = "sta2.jpg", .rom = "roms/sta2.sfc"},
+        {.titulo = "Metal Slug 3", .emulador = NEO, .imagem = "mslug3.jpg", .rom = "roms/mslug3.neo"},
+        {.titulo = "Sonic 3", .emulador = GBA, .imagem = "sonic3.jpg", .rom = "roms/sonicadv3.gba"},
+        {.titulo = "The king of Fighters", .emulador = NEO, .imagem = "kof98.jpeg", .rom = "roms/kof98.neo"},
+        {.titulo = "Castlevania", .emulador = GBA, .imagem = "castlevania.jpg", .rom = "roms/castlevania.gba"},
+        {.titulo = "Super Mario World", .emulador = SNES, .imagem = "smw.jpg", .rom = "roms/smw.sfc"},
+        {.titulo = "Super Metroid", .emulador = SNES, .imagem = "metroid.jpeg", .rom = "roms/metroidt.sfc"},
+    };
 
     float larguraDesejada = 800.f;
     float alturaDesejada = 500.f;
 
     for (auto &jogo : lista)
     {
-        std::string nomeArquivo = lower(jogo.titulo);
-        nomeArquivo.erase(std::remove_if(nomeArquivo.begin(), nomeArquivo.end(), ::isspace), nomeArquivo.end());
 
-        std::string caminhoCapa = "public/assets/capas/" + nomeArquivo + ".jpg";
+        std::string caminhoCapa = "public/assets/capas/" + jogo.imagem;
+
+        // ... dentro do loop for (auto &jogo : lista) ...
 
         if (!jogo.textura.loadFromFile(caminhoCapa))
         {
             std::cout << "Aviso: Capa nao encontrada para " << jogo.titulo << " em " << caminhoCapa << std::endl;
 
-            jogo.sprite.setTextureRect(sf::IntRect(0, 0, 400, 300));
-            jogo.sprite.setColor(sf::Color(100, 100, 100));
+            // SFML 3: cria o sprite a partir da textura (mesmo vazia) e marca como placeholder
+            jogo.sprite.emplace(jogo.textura);
+            // SFML 3: IntRect agora usa um vetor para o tamanho (ou construtor simplificado)
+            jogo.sprite->setTextureRect(sf::IntRect({0, 0}, {400, 300}));
+            jogo.sprite->setColor(sf::Color(100, 100, 100));
 
             jogo.escalaBaseX = larguraDesejada / 400.f;
             jogo.escalaBaseY = alturaDesejada / 300.f;
         }
         else
         {
-            jogo.sprite.setTexture(jogo.textura);
+            jogo.sprite.emplace(jogo.textura);
             sf::Vector2u tamanhoTextura = jogo.textura.getSize();
 
-            jogo.escalaBaseX = larguraDesejada / tamanhoTextura.x;
-            jogo.escalaBaseY = alturaDesejada / tamanhoTextura.y;
+            jogo.escalaBaseX = larguraDesejada / (float)tamanhoTextura.x;
+            jogo.escalaBaseY = alturaDesejada / (float)tamanhoTextura.y;
         }
 
-        sf::FloatRect bounds = jogo.sprite.getLocalBounds();
-        jogo.sprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+        sf::FloatRect bounds = jogo.sprite->getLocalBounds();
+        jogo.sprite->setOrigin({bounds.size.x / 2.f, bounds.size.y / 2.f});
     }
 
     return lista;
