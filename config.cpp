@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <cctype>
 
-const std::string SNES = "retroarch -L /home/alissonl/.config/retroarch/cores/snes9x_libretro.so";
-const std::string GBA = "retroarch -L /home/alissonl/.config/retroarch/cores/mgba_libretro.so";
-const std::string NEO = "retroarch -L /home/alissonl/.config/retroarch/cores/fbneo_libretro.so";
-const std::string PSCX = "retroarch -L /home/alissonl/.config/retroarch/cores/snes9x_libretro.so";
+const std::string SNES = "retroarch -L /home/projeto/.config/retroarch/cores/snes9x_libretro.so";
+const std::string GBA = "retroarch -L /home/projeto/.config/retroarch/cores/mgba_libretro.so";
+const std::string NEO = "retroarch -L /home/projeto/.config/retroarch/cores/fbneo_libretro.so";
+const std::string PSCX = "retroarch -L /home/projeto/.config/retroarch/cores/snes9x_libretro.so";
 
 std::string lower(std::string data)
 {
@@ -22,13 +22,13 @@ std::string lower(std::string data)
 std::vector<Jogo> carregarConfiguracoes()
 {
     std::vector<Jogo> lista = {
-        {.titulo = "Street Fighter 2", .emulador = SNES, .imagem = "sta2.jpg", .rom = "roms/sta2.sfc"},
-        {.titulo = "Metal Slug 3", .emulador = NEO, .imagem = "mslug3.jpg", .rom = "roms/mslug3.neo"},
-        {.titulo = "Sonic 3", .emulador = GBA, .imagem = "sonic3.jpg", .rom = "roms/sonicadv3.gba"},
-        {.titulo = "The king of Fighters", .emulador = NEO, .imagem = "kof98.jpeg", .rom = "roms/kof98.neo"},
-        {.titulo = "Castlevania", .emulador = GBA, .imagem = "castlevania.jpg", .rom = "roms/castlevania.gba"},
-        {.titulo = "Super Mario World", .emulador = SNES, .imagem = "smw.jpg", .rom = "roms/smw.sfc"},
-        {.titulo = "Super Metroid", .emulador = SNES, .imagem = "metroid.jpeg", .rom = "roms/metroidt.sfc"},
+        {.titulo = "Street Fighter 2", .emulador = SNES, .imagem = "sta2.jpg", .rom = "/home/projeto/Downloads/Arcade/roms/sta2.sfc"},
+        {.titulo = "Metal Slug 3", .emulador = NEO, .imagem = "mslug3.jpg", .rom = "/home/projeto/Downloads/Arcade/roms/mslug3.neo"},
+        {.titulo = "Sonic 3", .emulador = GBA, .imagem = "sonic3.jpg", .rom = "/home/projeto/Downloads/Arcade/roms/sonicadv3.gba"},
+        {.titulo = "The king of Fighters", .emulador = NEO, .imagem = "kof98.jpeg", .rom = "/home/projeto/Downloads/Arcade/roms/kof98.neo"},
+        {.titulo = "Castlevania", .emulador = GBA, .imagem = "castlevania.jpg", .rom = "/home/projeto/Downloads/Arcade/roms/castlevania.gba"},
+        {.titulo = "Super Mario World", .emulador = SNES, .imagem = "smw.jpg", .rom = "/home/projeto/Downloads/Arcade/roms/smw.sfc"},
+        {.titulo = "Super Metroid", .emulador = SNES, .imagem = "metroid.jpeg", .rom = "/home/projeto/Downloads/Arcade/roms/metroidt.sfc"},
     };
 
     float larguraDesejada = 800.f;
@@ -37,7 +37,7 @@ std::vector<Jogo> carregarConfiguracoes()
     for (auto &jogo : lista)
     {
 
-        std::string caminhoCapa = "public/assets/capas/" + jogo.imagem;
+        std::string caminhoCapa = "/home/projeto/Downloads/Arcade/public/assets/capas/" + jogo.imagem;
 
         // ... dentro do loop for (auto &jogo : lista) ...
 

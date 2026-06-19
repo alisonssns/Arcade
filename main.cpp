@@ -20,9 +20,10 @@ void inicializarJogo(Jogo jogo)
 
 int main()
 {
-    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-    // Na SFML 3, o Style::None mudou ligeiramente de escopo (opcional, mas recomendado passar como State)
-    sf::RenderWindow window(desktop, "Projeto Arcade", sf::State::Windowed);
+    // SFML 3: para fullscreen real, usa-se um modo de vídeo válido.
+    // getFullscreenModes()[0] retorna o melhor modo suportado pelo monitor.
+    sf::VideoMode modoTela = sf::VideoMode::getFullscreenModes()[0];
+    sf::RenderWindow window(modoTela, "Projeto Arcade", sf::State::Fullscreen);
     sf::Font fonte;
 
     std::vector<Jogo> listaJogos = carregarConfiguracoes();
@@ -37,7 +38,7 @@ int main()
     }
 
     // SFML 3: loadFromFile mudou para openFromFile
-    if (!fonte.openFromFile("./fontes/arial.ttf"))
+    if (!fonte.openFromFile("/home/projeto/Downloads/Arcade/fontes/arial.ttf"))
     {
         std::cerr << "Erro ao carregar a fonte!" << std::endl;
     }
