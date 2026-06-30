@@ -26,29 +26,39 @@ int main()
     sf::RenderWindow window(modoTela, "Projeto Arcade", sf::State::Fullscreen);
     sf::Font fonte;
 
-    std::vector<Jogo> listaJogos = carregarConfiguracoes();
+    // Duas abas: 0 = Emulador, 1 = Comunidade (jogos .exe via Wine)
+    std::vector<Jogo> listaEmulador = carregarConfiguracoes();
+    std::vector<Jogo> listaComunidade = carregarComunidade();
 
-    for (int i = 0; i < listaJogos.size(); i++)
+    for (auto *lista : {&listaEmulador, &listaComunidade})
     {
-        // Se a textura tem tamanho, significa que o loadFromFile deu certo
-        if (listaJogos[i].textura.getSize().x > 0)
+        for (auto &jogo : *lista)
         {
-            listaJogos[i].sprite->setTexture(listaJogos[i].textura);
+            // Se a textura tem tamanho, significa que o loadFromFile deu certo
+            if (jogo.textura.getSize().x > 0)
+            {
+                jogo.sprite->setTexture(jogo.textura);
+            }
         }
     }
 
     // SFML 3: loadFromFile mudou para openFromFile
-    if (!fonte.openFromFile("/home/projeto/Downloads/Arcade/fontes/arial.ttf"))
+    if (!fonte.openFromFile("/home/alissonl/Downloads/Arcade/fontes/arial.ttf"))
     {
         std::cerr << "Erro ao carregar a fonte!" << std::endl;
     }
 
     window.setFramerateLimit(60);
 
-    int selecionado = 0;
+    int abaAtual = 0; // 0 = Emulador, 1 = Comunidade
+    int selecionados[2] = {0, 0};
 
     while (window.isOpen())
     {
+        // Lista e seleção da aba ativa neste frame
+        std::vector<Jogo> &listaJogos = (abaAtual == 0) ? listaEmulador : listaComunidade;
+        int &selecionado = selecionados[abaAtual];
+
         // SFML 3: O novo sistema de eventos com std::optional
         while (const std::optional<sf::Event> event = window.pollEvent())
         {
@@ -61,11 +71,16 @@ int main()
             {
                 if (keyPressed->scancode == sf::Keyboard::Scan::Escape)
                     window.close();
-                if (keyPressed->scancode == sf::Keyboard::Scan::Right && selecionado < listaJogos.size() - 1)
+                // W / S alternam entre as abas Emulador e Comunidade
+                if (keyPressed->scancode == sf::Keyboard::Scan::W)
+                    abaAtual = 0;
+                if (keyPressed->scancode == sf::Keyboard::Scan::S)
+                    abaAtual = 1;
+                if (keyPressed->scancode == sf::Keyboard::Scan::D && selecionado < (int)listaJogos.size() - 1)
                     selecionado++;
-                if (keyPressed->scancode == sf::Keyboard::Scan::Left && selecionado > 0)
+                if (keyPressed->scancode == sf::Keyboard::Scan::A && selecionado > 0)
                     selecionado--;
-                if (keyPressed->scancode == sf::Keyboard::Scan::Enter)
+                if (keyPressed->scancode == sf::Keyboard::Scan::F && !listaJogos.empty())
                     inicializarJogo(listaJogos[selecionado]);
             }
         }
@@ -99,7 +114,8 @@ int main()
             }
         }
 
-        window.draw(*listaJogos[selecionado].sprite);
+        if (!listaJogos.empty())
+            window.draw(*listaJogos[selecionado].sprite);
 
         // SFML 3: Construtor do RectangleShape exige vetor com chaves {}
         sf::RectangleShape sidebar({larguraSidebar, static_cast<float>(window.getSize().y)});
@@ -109,25 +125,48 @@ int main()
         // SFML 3: A fonte vem primeiro, depois a string!
         sf::Text logo(fonte, "Projeto Arcade", 24);
         logo.setPosition({40.f, 50.f});
-        // SFML 3: SetStyle também teve o enum alterado para Bold
         logo.setStyle(sf::Text::Bold);
+
+        // A aba ativa fica destacada (W/S alternam entre elas)
+        sf::Text emul(fonte, "Emulador", 18);
+        emul.setPosition({40.f, 110.f});
+        emul.setStyle(sf::Text::Bold);
+        emul.setFillColor(abaAtual == 0 ? COR_DESTAQUE : sf::Color::White);
+
+        sf::Text com(fonte, "Comunidade", 18);
+        com.setPosition({40.f, 150.f});
+        com.setStyle(sf::Text::Bold);
+        com.setFillColor(abaAtual == 1 ? COR_DESTAQUE : sf::Color::White);
+
         window.draw(logo);
+        window.draw(com);
+        window.draw(emul);
 
-        sf::Text txtTitulo(fonte, listaJogos[selecionado].titulo, 28);
-        // SFML 3: width virou size.x
-        txtTitulo.setOrigin({txtTitulo.getGlobalBounds().size.x / 2.f, 0.f});
-        txtTitulo.setPosition({centroX, centroY + 180.f});
-        window.draw(txtTitulo);
+        if (!listaJogos.empty())
+        {
+            sf::Text txtTitulo(fonte, listaJogos[selecionado].titulo, 28);
+            // SFML 3: width virou size.x
+            txtTitulo.setOrigin({txtTitulo.getGlobalBounds().size.x / 2.f, 0.f});
+            txtTitulo.setPosition({centroX, centroY + 180.f});
+            window.draw(txtTitulo);
 
-        sf::Text txtInfo(fonte, std::to_string(selecionado + 1) + "/" + std::to_string(listaJogos.size()), 18);
-        txtInfo.setOrigin({txtInfo.getGlobalBounds().size.x / 2.f, 0.f});
-        txtInfo.setPosition({centroX, centroY + 230.f});
-        window.draw(txtInfo);
+            sf::Text txtInfo(fonte, std::to_string(selecionado + 1) + "/" + std::to_string(listaJogos.size()), 18);
+            txtInfo.setOrigin({txtInfo.getGlobalBounds().size.x / 2.f, 0.f});
+            txtInfo.setPosition({centroX, centroY + 230.f});
+            window.draw(txtInfo);
 
-        sf::Text txtAcao(fonte, "Pressione (A) para iniciar o jogo", 18);
-        txtAcao.setOrigin({txtAcao.getGlobalBounds().size.x / 2.f, 0.f});
-        txtAcao.setPosition({centroX, window.getSize().y - 80.f});
-        window.draw(txtAcao);
+            sf::Text txtAcao(fonte, "Pressione (F) para iniciar o jogo", 18);
+            txtAcao.setOrigin({txtAcao.getGlobalBounds().size.x / 2.f, 0.f});
+            txtAcao.setPosition({centroX, window.getSize().y - 80.f});
+            window.draw(txtAcao);
+        }
+        else
+        {
+            sf::Text vazio(fonte, "Nenhum jogo nesta aba ainda.", 24);
+            vazio.setOrigin({vazio.getGlobalBounds().size.x / 2.f, 0.f});
+            vazio.setPosition({centroX, centroY});
+            window.draw(vazio);
+        }
 
         window.display();
     }

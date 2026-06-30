@@ -28,5 +28,6 @@ const sf::Color COR_SIDEBAR(20, 26, 35);
 const sf::Color COR_DESTAQUE(58, 134, 255);
 
 std::vector<Jogo> carregarConfiguracoes();
+std::vector<Jogo> carregarComunidade();
 
 #endif
