@@ -2,7 +2,7 @@ import keyboard
 import serial
 import time
 
-porta = '/dev/ttyUSB0'
+porta = '/dev/ttyUSB1'
 velocidade = 115200 
 
 teclas_ativas = set()
@@ -25,7 +25,7 @@ try:
 
             for t in teclas_para_pressionar:
                 keyboard.press(t)
-
+                
             for t in teclas_para_soltar:
                 keyboard.release(t)
 
