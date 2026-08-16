@@ -4,30 +4,29 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <optional>
 
-struct Jogo
+struct Game
 {
-    std::string titulo;
     std::string emulador;
+    std::string titulo;
     std::string rota;
     std::string imagem;
     std::string rom;
     sf::Texture textura;
-    // SFML 3: sf::Sprite exige uma textura no construtor e nao tem default.
-    // Guardamos a textura acima e construimos o sprite a partir dela (via emplace).
     std::optional<sf::Sprite> sprite;
     float escalaBaseX = 1.0f;
     float escalaBaseY = 1.0f;
 };
-// Sem construtor proprio a struct volta a ser um aggregate,
-// entao os designated initializers em config.cpp funcionam.
 
-const sf::Color COR_FUNDO(15, 20, 25);
-const sf::Color COR_SIDEBAR(20, 26, 35);
-const sf::Color COR_DESTAQUE(58, 134, 255);
+inline const sf::Color COR_FUNDO(15, 20, 25);
+inline const sf::Color COR_SIDEBAR(20, 26, 35);
+inline const sf::Color COR_DESTAQUE(58, 134, 255);
 
-std::vector<Jogo> carregarConfiguracoes();
-std::vector<Jogo> carregarComunidade();
+std::vector<Game> inicializar_jogos(const std::string &pasta_jogos);
+std::vector<Game> carregar_comunidade(const std::string &pasta_jogos);
+void rodar_jogo(Game jogo);
+std::string get_root();
 
 #endif

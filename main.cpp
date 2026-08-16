@@ -1,11 +1,8 @@
 #include "config.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <vector>
-#include <string>
-#include <iostream>
 
-void inicializarJogo(Jogo jogo)
+void rodar_jogo(Game jogo)
 {
     std::string comando = jogo.emulador + " " + jogo.rom;
     int resultado = system(comando.c_str());
@@ -20,21 +17,20 @@ void inicializarJogo(Jogo jogo)
 
 int main()
 {
-    // SFML 3: para fullscreen real, usa-se um modo de vídeo válido.
-    // getFullscreenModes()[0] retorna o melhor modo suportado pelo monitor.
+    std::string jogos_emulador = "jogos";
+    std::string jogos_comunidade = "comunidade";
+
     sf::VideoMode modoTela = sf::VideoMode::getFullscreenModes()[0];
     sf::RenderWindow window(modoTela, "Projeto Arcade", sf::State::Fullscreen);
     sf::Font fonte;
 
-    // Duas abas: 0 = Emulador, 1 = Comunidade (jogos .exe via Wine)
-    std::vector<Jogo> listaEmulador = carregarConfiguracoes();
-    std::vector<Jogo> listaComunidade = carregarComunidade();
+    std::vector<Game> listaEmulador = inicializar_jogos(jogos_emulador);
+    std::vector<Game> listaComunidade = carregar_comunidade(jogos_comunidade);
 
     for (auto *lista : {&listaEmulador, &listaComunidade})
     {
         for (auto &jogo : *lista)
         {
-            // Se a textura tem tamanho, significa que o loadFromFile deu certo
             if (jogo.textura.getSize().x > 0)
             {
                 jogo.sprite->setTexture(jogo.textura);
@@ -42,21 +38,19 @@ int main()
         }
     }
 
-    // SFML 3: loadFromFile mudou para openFromFile
-    if (!fonte.openFromFile("/home/alissonl/Downloads/Arcade/fontes/arial.ttf"))
+    if (!fonte.openFromFile(get_root() + "/fontes/arial.ttf"))
     {
         std::cerr << "Erro ao carregar a fonte!" << std::endl;
     }
 
     window.setFramerateLimit(60);
 
-    int abaAtual = 0; // 0 = Emulador, 1 = Comunidade
+    int abaAtual = 0;
     int selecionados[2] = {0, 0};
 
     while (window.isOpen())
     {
-        // Lista e seleção da aba ativa neste frame
-        std::vector<Jogo> &listaJogos = (abaAtual == 0) ? listaEmulador : listaComunidade;
+        std::vector<Game> &listaJogos = (abaAtual == 0) ? listaEmulador : listaComunidade;
         int &selecionado = selecionados[abaAtual];
 
         // SFML 3: O novo sistema de eventos com std::optional
@@ -81,7 +75,7 @@ int main()
                 if (keyPressed->scancode == sf::Keyboard::Scan::A && selecionado > 0)
                     selecionado--;
                 if (keyPressed->scancode == sf::Keyboard::Scan::F && !listaJogos.empty())
-                    inicializarJogo(listaJogos[selecionado]);
+                    rodar_jogo(listaJogos[selecionado]);
             }
         }
 
@@ -97,7 +91,6 @@ int main()
             float dist = i - selecionado;
             float offset = dist * 600.f;
 
-            // SFML 3: Exige vetor {x, y} em vez de floats separados
             listaJogos[i].sprite->setPosition({centroX + offset, sliderY - 50.f});
 
             if (i == selecionado)
@@ -108,7 +101,6 @@ int main()
             else
             {
                 listaJogos[i].sprite->setScale({listaJogos[i].escalaBaseX * 0.8f, listaJogos[i].escalaBaseY * 0.8f});
-                // SFML 3: Cores não usam mais construtor com 4 inteiros no formato antigo, usar rgba
                 listaJogos[i].sprite->setColor(sf::Color(100, 100, 100, 150));
                 window.draw(*listaJogos[i].sprite);
             }
@@ -117,17 +109,14 @@ int main()
         if (!listaJogos.empty())
             window.draw(*listaJogos[selecionado].sprite);
 
-        // SFML 3: Construtor do RectangleShape exige vetor com chaves {}
         sf::RectangleShape sidebar({larguraSidebar, static_cast<float>(window.getSize().y)});
         sidebar.setFillColor(COR_SIDEBAR);
         window.draw(sidebar);
 
-        // SFML 3: A fonte vem primeiro, depois a string!
         sf::Text logo(fonte, "Projeto Arcade", 24);
         logo.setPosition({40.f, 50.f});
         logo.setStyle(sf::Text::Bold);
 
-        // A aba ativa fica destacada (W/S alternam entre elas)
         sf::Text emul(fonte, "Emulador", 18);
         emul.setPosition({40.f, 110.f});
         emul.setStyle(sf::Text::Bold);
@@ -145,7 +134,6 @@ int main()
         if (!listaJogos.empty())
         {
             sf::Text txtTitulo(fonte, listaJogos[selecionado].titulo, 28);
-            // SFML 3: width virou size.x
             txtTitulo.setOrigin({txtTitulo.getGlobalBounds().size.x / 2.f, 0.f});
             txtTitulo.setPosition({centroX, centroY + 180.f});
             window.draw(txtTitulo);
@@ -155,7 +143,7 @@ int main()
             txtInfo.setPosition({centroX, centroY + 230.f});
             window.draw(txtInfo);
 
-            sf::Text txtAcao(fonte, "Pressione (F) para iniciar o jogo", 18);
+            sf::Text txtAcao(fonte, "Pressione o BOTAO VERMELHO para iniciar o jogo", 18);
             txtAcao.setOrigin({txtAcao.getGlobalBounds().size.x / 2.f, 0.f});
             txtAcao.setPosition({centroX, window.getSize().y - 80.f});
             window.draw(txtAcao);
