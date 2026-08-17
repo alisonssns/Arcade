@@ -4,7 +4,7 @@ DIRETORIO="$(dirname "$(realpath "$0")")"
 
 echo "Iniciando os sistemas do Arcade..."
 
-sudo "$DIRETORIO/Keyboard" &
+sudo "$DIRETORIO/Teclado" &
 
 PID_TECLADO=$!
 

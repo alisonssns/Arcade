@@ -15,6 +15,12 @@ g++ main.cpp utils.cpp -o Arcade -std=c++20 -lsfml-graphics -lsfml-window -lsfml
 echo "=== 3. Ajustando permissões dos arquivos ==="
 chmod +x Teclado
 chmod +x Arcade
+chmod +x inicializar.sh
 chmod -R +rwx ./jogos
 
-echo "=== Instalação e compilação concluídas com sucesso! ==="
+echo "=== 4. Configurando permissão sudo sem senha ==="
+SCRIPT_PATH="$(realpath ./inicializar.sh)"
+echo "$USER ALL=(ALL) NOPASSWD: $SCRIPT_PATH" | sudo tee /etc/sudoers.d/arcade_permissions > /dev/null
+sudo chmod 0440 /etc/sudoers.d/arcade_permissions
+
+echo "=== Instalação e configuração concluídas com sucesso! ==="
