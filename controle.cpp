@@ -21,10 +21,11 @@ std::mutex uinput_mutex; // Evita que os dois arduinos tentem "digitar" no mesmo
 // (Adicione aqui as teclas que seus Arduinos enviam)
 std::unordered_map<char, int> mapa_teclas = {
     {'w', KEY_W}, {'a', KEY_A}, {'s', KEY_S}, {'d', KEY_D},     // Player 1 - Movimento
-    {'u', KEY_U}, {'i', KEY_I}, {'o', KEY_O}, {'p', KEY_P},     // Player 1 - Ação
-    {'j', KEY_J}, {'k', KEY_K}, {'l', KEY_L}, {'c', KEY_C},     // Player 2 - Movimento
-    {'1', KEY_1}, {'2', KEY_2}, {'3', KEY_3}, {'4', KEY_4},     // Player 2 - Ação
-    {'5', KEY_5}, {'6', KEY_6}                                  // Fichas / Start
+    {'q', KEY_Q}, {'e', KEY_E}, {'r', KEY_R}, {'z', KEY_Z},     // Player 1 - Ação
+    {'x', KEY_X}, {'c', KEY_C}, {'f', KEY_F}, {'i', KEY_I},     // Player 1 - Ação
+    {'j', KEY_J}, {'k', KEY_K}, {'l', KEY_L}, {'u', KEY_U},     // Player 2 - Movimento
+    {'o', KEY_O}, {'p', KEY_P}, {'b', KEY_B}, {'n', KEY_N},     // Player 2 - Ação
+    {'m', KEY_M}, {'y', KEY_Y}                                  // Fichas / Start
 };
 
 // Captura o CTRL+C para sair do loop
@@ -90,7 +91,7 @@ void ler_arduino(const std::string& porta, int uinput_fd) {
     tty.c_cflag &= ~CSTOPB;                    // 1 stop bit
     tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG); // Modo RAW
     tty.c_cc[VMIN] = 0;
-    tty.c_cc[VTIME] = 1; // Timeout de 0.1 segundos
+    tty.c_cc[VTIME] = 0.01; // Timeout de 0.1 segundos
     tcsetattr(serial_fd, TCSANOW, &tty);
 
     std::cout << "[CONECTADO] " << porta << " operando.\n";
