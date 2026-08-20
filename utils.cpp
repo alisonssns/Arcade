@@ -10,7 +10,8 @@ const std::unordered_map<std::string, std::string> emulators = {
     {".gba", "mgba_libretro.so"},
     {".neo", "fbneo_libretro.so"},
     {".nes", "nestopia_libretro.so"},
-    {".zip", "flycast_libretro.so"}};
+    {".z64", "mupen64.so"},
+    {".zip", "mame2000_libretro.so"}};
 
 bool is_img(const std::string ext)
 {
