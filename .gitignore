@@ -3,3 +3,4 @@ venv
 jogos/*
 Arcade
 Teclado
+*.zip

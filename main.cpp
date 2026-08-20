@@ -4,7 +4,7 @@
 
 void rodar_jogo(Game jogo)
 {
-    std::string comando = jogo.emulador + " " + jogo.rom;
+    std::string comando = jogo.emulador + " '" + jogo.rom + "'";
     int resultado = system(comando.c_str());
 
     printf("%s \n", comando.c_str());

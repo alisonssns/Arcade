@@ -11,6 +11,7 @@ const std::unordered_map<std::string, std::string> emulators = {
     {".neo", "fbneo_libretro.so"},
     {".nes", "nestopia_libretro.so"},
     {".z64", "mupen64.so"},
+    {".chd", "mame2000_libretro.so"},
     {".zip", "mame2000_libretro.so"}};
 
 bool is_img(const std::string ext)
