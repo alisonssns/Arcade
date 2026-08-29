@@ -38,7 +38,7 @@ int main()
         }
     }
 
-    if (!fonte.openFromFile(get_root() + "/fontes/arial.ttf"))
+    if (!fonte.openFromFile(get_root() + "/fontes/font.ttf"))
     {
         std::cerr << "Erro ao carregar a fonte!" << std::endl;
     }

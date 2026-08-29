@@ -1,6 +1,7 @@
 #include "config.h"
 #include <filesystem>
 #include <unordered_map>
+#include <algorithm>
 #include <regex>
 
 namespace fs = std::filesystem;
@@ -118,6 +119,10 @@ std::vector<Game> inicializar_jogos(const std::string &pasta_jogos)
     std::cout << "Total de jogos encontrados: " << games.size() << std::endl;
 
     prepararSprites(games);
+
+    std::sort(games.begin(), games.end(), [](const Game &a, const Game &b)
+              { return a.titulo < b.titulo; });
+
     return games;
 }
 
