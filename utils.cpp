@@ -6,13 +6,13 @@
 namespace fs = std::filesystem;
 
 const std::unordered_map<std::string, std::string> emulators = {
-    {".sfc", "snes9x_libretro.so"},
+    {".sfc", "snesrea9x_libretro.so"},
     {".gba", "mgba_libretro.so"},
-    {".neo", "fbneo_libretro.so"},
-    {".nes", "nestopia_libretro.so"},
+    {".nes", "fceumm_libretro.so"},
     {".z64", "mupen64.so"},
-    {".chd", "mame2000_libretro.so"},
-    {".zip", "mame2000_libretro.so"}};
+    {".zip", "fbneo_libretro.so"},
+    {".chd", "flycast_libretro.so"},
+};
 
 bool is_img(const std::string ext)
 {
