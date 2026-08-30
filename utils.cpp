@@ -7,7 +7,7 @@
 namespace fs = std::filesystem;
 
 const std::unordered_map<std::string, std::string> emulators = {
-    {".sfc", "snesrea9x_libretro.so"},
+    {".sfc", "snes9x_libretro.so"},
     {".gba", "mgba_libretro.so"},
     {".nes", "fceumm_libretro.so"},
     {".z64", "mupen64.so"},
