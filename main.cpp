@@ -113,7 +113,7 @@ int main()
         sidebar.setFillColor(COR_SIDEBAR);
         window.draw(sidebar);
 
-        sf::Text logo(fonte, "Projeto Arcade", 24);
+        sf::Text logo(fonte, "Arcade", 24);
         logo.setPosition({40.f, 50.f});
         logo.setStyle(sf::Text::Bold);
 

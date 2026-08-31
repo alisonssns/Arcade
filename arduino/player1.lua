@@ -1,6 +1,6 @@
 const int NUM_BOTOES = 12;
-const int pinos[NUM_BOTOES] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,13};
-const char caracteres[NUM_BOTOES] = {'w','a','s','d','q','e','r','z','x','c','f','g'};
+const int pinos[NUM_BOTOES] = {1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,13};
+const char caracteres[NUM_BOTOES] = {'g','w','a','s','d','q','e','r','z','x','c','f'};
 
 char estadoAnterior[12] = ""; 
 
@@ -34,6 +34,6 @@ void loop() {
   if (strcmp(estadoAtual, estadoAnterior) != 0) {
     Serial.println(estadoAtual);
     strcpy(estadoAnterior, estadoAtual);
-    delay(15); // Debounce
+    delay(10); // Debounce
   }
 }

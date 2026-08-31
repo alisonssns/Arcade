@@ -91,7 +91,7 @@ void ler_arduino(const std::string& porta, int uinput_fd) {
     tty.c_cflag &= ~CSTOPB;                    // 1 stop bit
     tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG); // Modo RAW
     tty.c_cc[VMIN] = 0;
-    tty.c_cc[VTIME] = 0.01; // Timeout de 0.1 segundos
+    tty.c_cc[VTIME] = 0.005; // Timeout de 0.1 segundos
     tcsetattr(serial_fd, TCSANOW, &tty);
 
     std::cout << "[CONECTADO] " << porta << " operando.\n";
